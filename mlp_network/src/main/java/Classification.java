@@ -1,8 +1,5 @@
 import org.encog.engine.network.activation.ActivationFunction;
 import org.encog.ml.data.MLData;
-import org.encog.ml.data.basic.BasicMLData;
-import org.encog.ml.data.basic.BasicMLDataPair;
-import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.ml.data.versatile.NormalizationHelper;
 import org.encog.ml.data.versatile.VersatileMLDataSet;
 import org.encog.ml.data.versatile.columns.ColumnDefinition;
@@ -18,10 +15,7 @@ import org.encog.util.csv.CSVFormat;
 import org.encog.util.csv.ReadCSV;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.List;
 
 public class Classification {
 
@@ -44,7 +38,6 @@ public class Classification {
         this.momentum = momentum;
     }
 
-    // todo always full connection between layers
     private BasicNetwork generateNetwork() {
         BasicNetwork network = new BasicNetwork();
 
@@ -59,14 +52,6 @@ public class Classification {
     public void run(String path) {
         BasicNetwork network = generateNetwork();
         File trainingFile = new File(path);
-
-//        BasicMLDataSet trainingDataSet = new BasicMLDataSet();
-//        try {
-//            fillData(trainingDataSet, trainingFile);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return;
-//        }
 
         VersatileDataSource source = new CSVDataSource(trainingFile, true, CSVFormat.DECIMAL_POINT);
 
@@ -136,27 +121,6 @@ public class Classification {
 
             System.out.println(result.toString());
             stopAfter--;
-        }
-    }
-
-    private void fillData(BasicMLDataSet dataSet, File trainingFile) throws IOException {
-
-        System.out.println("Input file");
-        List<String> lines = Files.readAllLines(trainingFile.toPath());
-        boolean header = true;
-        for (String line : lines) {
-            if (header) {
-                header = false;
-                continue;
-            }
-            String[] split = line.split(",");
-            double[] input = new double[split.length - 1];
-            double output = Double.valueOf(split[split.length - 1]);
-            for (int i = 0; i < split.length - 1; i++) {
-                input[i] = Double.valueOf(split[i]);
-            }
-            dataSet.add(new BasicMLDataPair(new BasicMLData(input),
-                    new BasicMLData(new double[]{output})));
         }
     }
 }
