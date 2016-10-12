@@ -6,23 +6,23 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff:
-.idea/workspace.xml
-.idea/tasks.xml
+mlp_network/.idea/workspace.xml
+mlp_network/.idea/tasks.xml
 
 # Sensitive or high-churn files:
-.idea/dataSources.ids
-.idea/dataSources.xml
-.idea/dataSources.local.xml
-.idea/sqlDataSources.xml
-.idea/dynamic.xml
-.idea/uiDesigner.xml
+mlp_network/.idea/dataSources.ids
+mlp_network/.idea/dataSources.xml
+mlp_network/.idea/dataSources.local.xml
+mlp_network/.idea/sqlDataSources.xml
+mlp_network/.idea/dynamic.xml
+mlp_network/.idea/uiDesigner.xml
 
 # Gradle:
-.idea/gradle.xml
-.idea/libraries
+mlp_network/.idea/gradle.xml
+mlp_network/.idea/libraries
 
 # Mongo Explorer plugin:
-.idea/mongoSettings.xml
+mlp_network/.idea/mongoSettings.xml
 
 ## File-based project format:
 *.iws
@@ -30,19 +30,19 @@
 ## Plugin-specific files:
 
 # IntelliJ
-/out/
+mlp_network/out/
 
 # mpeltonen/sbt-idea plugin
-.idea_modules/
+mlp_network/.idea_modules/
 
 # JIRA plugin
-atlassian-ide-plugin.xml
+mlp_network/atlassian-ide-plugin.xml
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
-fabric.properties
+mlp_network/com_crashlytics_export_strings.xml
+mlp_network/crashlytics.properties
+mlp_network/crashlytics-build.properties
+mlp_network/fabric.properties
 
 ### Intellij Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
@@ -54,22 +54,22 @@ fabric.properties
 
 
 ### Maven ###
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
+mlp_network/target/
+mlp_network/pom.xml.tag
+mlp_network/pom.xml.releaseBackup
+mlp_network/pom.xml.versionsBackup
+mlp_network/pom.xml.next
+mlp_network/release.properties
+mlp_network/dependency-reduced-pom.xml
+mlp_network/buildNumber.properties
+mlp_network/.mvn/timing.properties
 
 
 ### Java ###
 *.class
 
 # Mobile Tools for Java (J2ME)
-.mtj.tmp/
+mlp_network/.mtj.tmp/
 
 # Package Files #
 *.jar
