@@ -1,5 +1,7 @@
 import org.encog.engine.network.activation.ActivationFunction;
 import org.encog.ml.data.MLData;
+import org.encog.ml.data.MLDataPair;
+import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.ml.data.versatile.NormalizationHelper;
 import org.encog.ml.data.versatile.VersatileMLDataSet;
 import org.encog.ml.data.versatile.columns.ColumnDefinition;
@@ -17,7 +19,7 @@ import org.encog.util.csv.ReadCSV;
 import java.io.File;
 import java.util.Arrays;
 
-public class Classification {
+public class NeuralNetwork {
 
     private int layers;
     private int iterations;
@@ -26,9 +28,10 @@ public class Classification {
     private ActivationFunction activationFunction;
     private double learnRate;
     private double momentum;
+    private String[] headers;
 
-    public Classification(int iterations, int[] neurons, boolean bias, ActivationFunction activationFunction,
-                          double learnRate, double momentum) {
+    public NeuralNetwork(int iterations, int[] neurons, boolean bias, ActivationFunction activationFunction,
+                         double learnRate, double momentum, String[] headers) {
         this.layers = neurons.length;
         this.iterations = iterations;
         this.neurons = neurons;
@@ -36,6 +39,7 @@ public class Classification {
         this.activationFunction = activationFunction;
         this.learnRate = learnRate;
         this.momentum = momentum;
+        this.headers = headers;
     }
 
     private BasicNetwork generateNetwork() {
@@ -58,27 +62,36 @@ public class Classification {
         VersatileMLDataSet data = new VersatileMLDataSet(source);
         data.getNormHelper().setFormat(CSVFormat.DECIMAL_POINT);
 
-        ColumnDefinition columnX = data.defineSourceColumn("x", ColumnType.continuous);
-        ColumnDefinition columnY = data.defineSourceColumn("y", ColumnType.continuous);
-        ColumnDefinition columnSet = data.defineSourceColumn("cls", ColumnType.continuous);
+        ColumnDefinition[] columnDefinitions = new ColumnDefinition[headers.length];
+
+        for (int i = 0; i < columnDefinitions.length; i++) {
+            columnDefinitions[i] = data.defineSourceColumn(headers[i], ColumnType.continuous);
+        }
 
         data.analyze();
 
-        data.defineInput(columnX);
-        data.defineInput(columnY);
-        data.defineOutput(columnSet);
+        for (int i = 0; i < columnDefinitions.length - 1; i++) {
+            data.defineInput(columnDefinitions[i]);
+        }
+        data.defineOutput(columnDefinitions[columnDefinitions.length - 1]);
 
         EncogModel model = new EncogModel(data);
         model.selectMethod(data, MLMethodFactory.TYPE_FEEDFORWARD);
         data.normalize();
-        model.holdBackValidation(0.3, true, 1001);
+        model.holdBackValidation(0.3, false, 1001);
 
         model.selectTrainingType(data);
 
         NormalizationHelper helper = data.getNormHelper();
 
+        BasicMLDataSet basicMLDataSet = new BasicMLDataSet();
+
+        for (MLDataPair mlDataPair : model.getDataset()) {
+            basicMLDataSet.add(mlDataPair);
+        }
+
         ResilientPropagation trainer = new ResilientPropagation(network, model.getDataset());
-//        Backpropagation trainer = new Backpropagation(network, model.getDataset(), learnRate, momentum);
+//        Backpropagation trainer = new Backpropagation(network, basicMLDataSet, learnRate, momentum);
         System.out.println("Neural Network Iterations:");
         double[] error = new double[iterations];
         int iteration = 0;
@@ -92,22 +105,20 @@ public class Classification {
         trainer.finishTraining();
 
         ReadCSV csv = new ReadCSV(trainingFile, true, CSVFormat.DECIMAL_POINT);
-        String[] line = new String[3];
+        String[] line = new String[headers.length];
 
-        double[] slice = new double[3];
-        // Only display the first 1000
+        double[] slice = new double[headers.length];
 
-        int stopAfter = 10000;
         int index = 0;
-        while (csv.next() && stopAfter > 0) {
+        while (csv.next()) {
             StringBuilder result = new StringBuilder();
 
-            line[0] = csv.get(0);
-            line[1] = csv.get(1);
-            line[2] = csv.get(2);
+            for (int i = 0; i < line.length; i++) {
+                line[i] = csv.get(i);
+            }
             helper.normalizeInputVector(line, slice, true);
 
-            String correct = csv.get(2);
+            String correct = csv.get(line.length - 1);
             MLData output = network.compute(data.get(index).getInput());
             index++;
             String predicted = helper.denormalizeOutputVectorToString(output)[0];
@@ -120,7 +131,6 @@ public class Classification {
             result.append(")");
 
             System.out.println(result.toString());
-            stopAfter--;
         }
     }
 }
