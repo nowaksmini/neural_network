@@ -6,16 +6,20 @@ public class Program {
 
     public static void main(String[] args) {
         // regresion problem
-        NeuralNetwork neuralNetwork = new NeuralNetwork(4000, new int[]{1, 10, 1}, true, new ActivationTANH(),
-                0.6, 0.7, new String[]{"x", "y"});
+        NeuralNetwork neuralNetwork = new NeuralNetwork(2000, new int[]{1, 10, 10, 1}, true, new ActivationTANH(),
+                0.1, 0.0, new String[]{"x", "y"});
         String fileName = "data.xsq.train.csv";
         URL resource = neuralNetwork.getClass().getResource(fileName);
-        neuralNetwork.run(resource.getFile());
+        neuralNetwork.train(resource.getFile());
+        URL resourceTest = neuralNetwork.getClass().getResource("data.xsq.test.csv");
+        neuralNetwork.test(resourceTest.getFile());
         //classification problem
-        NeuralNetwork classification = new NeuralNetwork(20, new int[]{2, 10, 1}, true, new ActivationTANH(),
-                0.6, 0.7, new String[]{"x", "y", "cls"});
-        String fileNameClassification = "data.train.csv";
-        URL resourceClassification = classification.getClass().getResource(fileNameClassification);
-        classification.run(resourceClassification.getFile());
+//        NeuralNetwork classification = new NeuralNetwork(5000, new int[]{2, 10, 10, 10, 1}, true, new ActivationTANH(),
+//                0.1, 0.0, new String[]{"x", "y", "cls"});
+//        String fileNameTrainingClassification = "data.train.csv";
+//        URL resourceTrainingClassification = classification.getClass().getResource(fileNameTrainingClassification);
+//        classification.train(resourceTrainingClassification.getFile());
+//        URL resourceTestClassification = classification.getClass().getResource("data.test.csv");
+        //classification.test(resourceTestClassification.getFile());
     }
 }
