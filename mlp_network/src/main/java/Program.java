@@ -5,7 +5,7 @@ import java.net.URL;
 public class Program {
 
     public static void main(String[] args) {
-        // regresion problem
+        // regression problem
         NeuralNetwork neuralNetwork = new NeuralNetwork(2000, new int[]{1, 10, 10, 1}, true, new ActivationTANH(),
                 0.1, 0.0, new String[]{"x", "y"});
         String fileName = "data.xsq.train.csv";

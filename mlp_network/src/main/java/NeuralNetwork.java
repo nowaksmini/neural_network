@@ -1,6 +1,7 @@
 import org.encog.engine.network.activation.ActivationFunction;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
+import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.data.versatile.NormalizationHelper;
 import org.encog.ml.data.versatile.VersatileMLDataSet;
 import org.encog.ml.data.versatile.columns.ColumnDefinition;
@@ -37,7 +38,6 @@ public class NeuralNetwork {
     private String[] headers;
     private BasicNetwork network;
     private NormalizationHelper helper;
-    private VersatileMLDataSet trainingDataSet;
 
     public NeuralNetwork(int iterations, int[] neurons, boolean bias, ActivationFunction activationFunction,
                          double learnRate, double momentum, String[] headers) {
@@ -61,7 +61,7 @@ public class NeuralNetwork {
 
         File trainingFile = new File(path);
 
-        trainingDataSet = readDataSet(trainingFile, true);
+        VersatileMLDataSet trainingDataSet = readDataSet(trainingFile, true);
 
         EncogModel model = new EncogModel(trainingDataSet);
         model.selectMethod(trainingDataSet, MLMethodFactory.TYPE_FEEDFORWARD);
@@ -104,7 +104,8 @@ public class NeuralNetwork {
             e.printStackTrace();
         }
 
-        calculateResults(trainingFile, trainingDataSet, true);
+        helper = trainingDataSet.getNormHelper();
+        calculateResults(trainingFile, true);
     }
 
     /**
@@ -114,13 +115,7 @@ public class NeuralNetwork {
      */
     public void test(String path) {
         File testedFile = new File(path);
-        VersatileMLDataSet testedDataSet = readDataSet(testedFile, false);
-        EncogModel model = new EncogModel(testedDataSet);
-        model.selectMethod(testedDataSet, MLMethodFactory.TYPE_FEEDFORWARD);
-        testedDataSet.normalize();
-        model.holdBackValidation(0.3, false, 1001);
-        model.selectTrainingType(trainingDataSet);
-        calculateResults(testedFile, model.getDataset(), false);
+        calculateResults(testedFile, false);
     }
 
     /**
@@ -177,18 +172,14 @@ public class NeuralNetwork {
      * Calculate predicted output and expected. Log results to console and save them to file.
      *
      * @param testedFile tested file - can be also training file
-     * @param inputData  data from encog model, already normalized
      * @param hasOutput  if input data has output column
      */
-    private void calculateResults(File testedFile, VersatileMLDataSet inputData, boolean hasOutput) {
+    private void calculateResults(File testedFile, boolean hasOutput) {
         System.out.println("Neural network results:");
         ReadCSV csv = new ReadCSV(testedFile, true, CSVFormat.DECIMAL_POINT);
-        if (hasOutput) {
-            helper = inputData.getNormHelper();
-        }
         int length = hasOutput ? headers.length : headers.length - 1;
         String[] line = new String[length];
-        int index = 0;
+        double[] lineData = new double[length];
         List<String> inputList = new LinkedList<String>();
         List<String> outputList = new LinkedList<String>();
         List<String> calculatedList = new LinkedList<String>();
@@ -197,12 +188,14 @@ public class NeuralNetwork {
             String inputString = "";
             for (int i = 0; i < line.length; i++) {
                 line[i] = csv.get(i);
+                lineData[i] = Double.valueOf(line[i]);
                 if (i == line.length - 1 && hasOutput) {
                     continue;
                 }
                 inputString += line[i] + " ";
             }
-            MLData output = network.compute(inputData.get(index).getInput());
+            helper.normalizeInputVector(line, lineData, true);
+            MLData output = network.compute(new BasicMLData(lineData));
             String predicted = helper.denormalizeOutputVectorToString(output)[0];
 
             result.append(Arrays.toString(line));
@@ -213,7 +206,6 @@ public class NeuralNetwork {
             result.append(predicted);
 
             System.out.println(result.toString());
-            index++;
         }
 
         if (headers.length == 2) {
