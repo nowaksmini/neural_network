@@ -208,16 +208,13 @@ public class NeuralNetwork {
         data.add(outputList);
         data.add(calculatedList);
 
-        if (headers.length == 2) {
-            try {
-                saveResultsToFile(data, hasOutput ? "train.txt" : "test.txt");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+        try {
+            saveResultsToFile(data, hasOutput ? "train.txt" : "test.txt");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-        // todo save to file
     }
 
     /**
