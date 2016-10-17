@@ -1,4 +1,4 @@
-import org.encog.engine.network.activation.ActivationTANH;
+import org.encog.engine.network.activation.ActivationBiPolar;
 
 import java.net.URL;
 
@@ -14,12 +14,12 @@ public class Program {
 //        URL resourceTest = neuralNetwork.getClass().getResource("data.xsq.test.csv");
 //        neuralNetwork.test(resourceTest.getFile());
         //classification problem
-        NeuralNetwork classification = new NeuralNetwork(2000, new int[]{2, 10, 10, 1}, true, new ActivationTANH(),
-                0.1, 0.1, new String[]{"x", "y", "cls"});
+        NeuralNetwork classification = new NeuralNetwork(5000, new int[]{2, 20, 30, 3}, true, new ActivationBiPolar(),
+                0.15, 0.41, new String[]{"x", "y", "cls"});
         String fileNameTrainingClassification = "data.train.csv";
         URL resourceTrainingClassification = classification.getClass().getResource(fileNameTrainingClassification);
         classification.train(resourceTrainingClassification.getFile());
         URL resourceTestClassification = classification.getClass().getResource("data.test.csv");
-        //classification.test(resourceTestClassification.getFile());
+        classification.test(resourceTestClassification.getFile());
     }
 }

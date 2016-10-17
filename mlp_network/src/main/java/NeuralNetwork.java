@@ -149,7 +149,11 @@ public class NeuralNetwork {
         ColumnDefinition[] columnDefinitions = new ColumnDefinition[headers.length];
 
         for (int i = 0; i < columnDefinitions.length; i++) {
-            columnDefinitions[i] = data.defineSourceColumn(headers[i], ColumnType.continuous);
+            if (i == headers.length-1 && headers.length == 3) {
+                columnDefinitions[i] = data.defineSourceColumn(headers[i], ColumnType.nominal);
+            } else {
+                columnDefinitions[i] = data.defineSourceColumn(headers[i], ColumnType.continuous);
+            }
         }
 
         data.analyze();
@@ -159,7 +163,6 @@ public class NeuralNetwork {
         }
 
         data.defineOutput(columnDefinitions[columnDefinitions.length - 1]);
-
         return data;
     }
 
