@@ -1,4 +1,4 @@
-fileID = fopen('regression_test.txt','r');
+fileID = fopen('train.txt','r');
 formatSpec = '%f';
 C =(fscanf(fileID,formatSpec));
 X = C(1:size(C)/3)';
@@ -7,7 +7,7 @@ CalculatedTraining = C(2 * size(C)/3 + 1:size(C))';
 figure % new figure
 fclose(fileID);
 
-fileID = fopen('regression.txt','r');
+fileID = fopen('test.txt','r');
 formatSpec = '%f';
 C1 =(fscanf(fileID,formatSpec));
 X1 = C1(1:size(C1)/2)';

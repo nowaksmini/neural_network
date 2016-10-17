@@ -61,7 +61,7 @@ public class NeuralNetwork {
 
         File trainingFile = new File(path);
 
-        VersatileMLDataSet trainingDataSet = readDataSet(trainingFile, true);
+        VersatileMLDataSet trainingDataSet = readDataSet(trainingFile);
 
         EncogModel model = new EncogModel(trainingDataSet);
         model.selectMethod(trainingDataSet, MLMethodFactory.TYPE_FEEDFORWARD);
@@ -109,7 +109,7 @@ public class NeuralNetwork {
     }
 
     /**
-     * Tests date read from test file.
+     * Tests data read from test file.
      *
      * @param path path to tested file
      */
@@ -135,13 +135,12 @@ public class NeuralNetwork {
     }
 
     /**
-     * Creates data set from input file. Used for training and testing
+     * Creates data set from input file. Used for training
      *
      * @param inputFile input csv file
-     * @param hasOutput if true define output column for training
      * @return not normalized data set for model
      */
-    private VersatileMLDataSet readDataSet(File inputFile, boolean hasOutput) {
+    private VersatileMLDataSet readDataSet(File inputFile) {
         VersatileDataSource source = new CSVDataSource(inputFile, true, CSVFormat.DECIMAL_POINT);
 
         VersatileMLDataSet data = new VersatileMLDataSet(source);
@@ -150,9 +149,6 @@ public class NeuralNetwork {
         ColumnDefinition[] columnDefinitions = new ColumnDefinition[headers.length];
 
         for (int i = 0; i < columnDefinitions.length; i++) {
-            if (!hasOutput && (i == columnDefinitions.length - 1)) {
-                break;
-            }
             columnDefinitions[i] = data.defineSourceColumn(headers[i], ColumnType.continuous);
         }
 
@@ -161,9 +157,8 @@ public class NeuralNetwork {
         for (int i = 0; i < columnDefinitions.length - 1; i++) {
             data.defineInput(columnDefinitions[i]);
         }
-        if (hasOutput) {
-            data.defineOutput(columnDefinitions[columnDefinitions.length - 1]);
-        }
+
+        data.defineOutput(columnDefinitions[columnDefinitions.length - 1]);
 
         return data;
     }
@@ -208,9 +203,14 @@ public class NeuralNetwork {
             System.out.println(result.toString());
         }
 
+        List<List<String>> data = new LinkedList<List<String>>();
+        data.add(inputList);
+        data.add(outputList);
+        data.add(calculatedList);
+
         if (headers.length == 2) {
             try {
-                saveRegressionToFile(inputList, outputList, calculatedList, hasOutput ? "regression_test.txt" : "regression.txt");
+                saveResultsToFile(data, hasOutput ? "train.txt" : "test.txt");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (UnsupportedEncodingException e) {
@@ -236,29 +236,21 @@ public class NeuralNetwork {
     }
 
     /**
-     * Saves expected and calculated data of regression problem to file name given
+     * Saves expected and calculated data to file name given
      *
      * @throws FileNotFoundException
      * @throws UnsupportedEncodingException
      */
-    private void saveRegressionToFile(List<String> x, List<String> y, List<String> calculated, String fileName)
+    private void saveResultsToFile(List<List<String>> data, String fileName)
             throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter writerNewest = new PrintWriter(fileName, "UTF-8");
-        StringBuilder stringX = new StringBuilder();
-        StringBuilder stringY = new StringBuilder();
-        StringBuilder stringCalculated = new StringBuilder();
-        for (String _x : x) {
-            stringX.append(_x).append(" ");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (List<String> strings : data) {
+            for (String string : strings) {
+                stringBuilder.append(string).append(" ");
+            }
         }
-        for (String _y : y) {
-            stringY.append(_y).append(" ");
-        }
-        for (String _calculated : calculated) {
-            stringCalculated.append(_calculated).append(" ");
-        }
-        writerNewest.write(stringX.toString());
-        writerNewest.write(stringY.toString());
-        writerNewest.write(stringCalculated.toString());
+        writerNewest.write(stringBuilder.toString());
         writerNewest.close();
     }
 

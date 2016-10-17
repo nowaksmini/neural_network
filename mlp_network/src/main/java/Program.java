@@ -7,7 +7,7 @@ public class Program {
     public static void main(String[] args) {
         // regression problem
         NeuralNetwork neuralNetwork = new NeuralNetwork(2000, new int[]{1, 10, 10, 1}, true, new ActivationTANH(),
-                0.1, 0.0, new String[]{"x", "y"});
+                0.01, 0.01, new String[]{"x", "y"});
         String fileName = "data.xsq.train.csv";
         URL resource = neuralNetwork.getClass().getResource(fileName);
         neuralNetwork.train(resource.getFile());
