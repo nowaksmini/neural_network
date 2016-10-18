@@ -181,6 +181,8 @@ public class NeuralNetwork {
         List<String> inputList = new LinkedList<String>();
         List<String> outputList = new LinkedList<String>();
         List<String> calculatedList = new LinkedList<String>();
+        int predictedCount[] = new int[3];
+        int expectedCount[] = new int[3];
         while (csv.next()) {
             StringBuilder result = new StringBuilder();
             String inputString = "";
@@ -203,8 +205,17 @@ public class NeuralNetwork {
             result.append(" -> predicted: ");
             result.append(predicted);
 
+//            predictedCount[Integer.parseInt(predicted) - 1]++;
+//            expectedCount[Integer.parseInt(line[2]) - 1]++;
+
             System.out.println(result.toString());
         }
+
+//        System.out.println("Przewidziano wartosci 1, 2, 3 tyle razy: " + predictedCount[0] + ", " +
+//        predictedCount[1] + ", " + predictedCount[2]);
+//
+//        System.out.println("Spodziewano sie wartosci 1, 2, 3 tyle razy: " + expectedCount[0] + ", " +
+//                expectedCount[1] + ", " + expectedCount[2]);
 
         List<List<String>> data = new LinkedList<List<String>>();
         data.add(inputList);
