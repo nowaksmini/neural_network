@@ -1,4 +1,4 @@
-function [MarkerColors] = draw()
+function [] = draw()
     fileID = fopen('train.txt','r');
     formatSpec = '%f';
     C =(fscanf(fileID,formatSpec));
@@ -53,7 +53,6 @@ function [X,Y] = findXY(Input)
 end
 
 function [] = drawScatter(MarkerColors, sizeT, X, Y, Color, style)
-    disp('SIZE ' + size(MarkerColors,1));
     for index = 1 : size(MarkerColors,1)
         Data = zeros(2, sizeT);
         last = 0;
@@ -66,7 +65,6 @@ function [] = drawScatter(MarkerColors, sizeT, X, Y, Color, style)
             end
         end
         PlotData = Data(:,1:last);
-        disp('Plot data, index = ' + index);
         scatter(PlotData(1,:),PlotData(2,:),130, style, 'MarkerEdgeColor', MarkerColors(index,1:3));
         hold on;
     end

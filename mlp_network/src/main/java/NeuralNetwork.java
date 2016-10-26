@@ -149,7 +149,7 @@ public class NeuralNetwork {
         ColumnDefinition[] columnDefinitions = new ColumnDefinition[headers.length];
 
         for (int i = 0; i < columnDefinitions.length; i++) {
-            if (i == headers.length-1 && headers.length == 3) {
+            if (i == headers.length - 1 && headers.length == 3) {
                 columnDefinitions[i] = data.defineSourceColumn(headers[i], ColumnType.nominal);
             } else {
                 columnDefinitions[i] = data.defineSourceColumn(headers[i], ColumnType.continuous);
@@ -208,7 +208,7 @@ public class NeuralNetwork {
 //            predictedCount[Integer.parseInt(predicted) - 1]++;
 //            expectedCount[Integer.parseInt(line[2]) - 1]++;
 
-            System.out.println(result.toString());
+            //System.out.println(result.toString());
         }
 
 //        System.out.println("Przewidziano wartosci 1, 2, 3 tyle razy: " + predictedCount[0] + ", " +

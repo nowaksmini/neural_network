@@ -5,23 +5,28 @@ import java.net.URL;
 public class Program {
 
     public static void main(String[] args) {
-        // regression problem
-//        NeuralNetwork neuralNetwork = new NeuralNetwork(2000, new int[]{1, 10, 10, 1}, true, new ActivationTANH(),
-//                0.01, 0.01, new String[]{"x", "y"});
-//        String fileName = "data.xsq.train.csv";
-//        URL resource = neuralNetwork.getClass().getResource(fileName);
-//        neuralNetwork.train(resource.getFile());
-//        URL resourceTest = neuralNetwork.getClass().getResource("data.xsq.test.csv");
-//        neuralNetwork.test(resourceTest.getFile());
-        //classification problem
-        NeuralNetwork classification = new NeuralNetwork(2000, new int[]{2, 50, 3}, true, new ActivationTANH(),
-                0.05, 0.01, new String[]{"x", "y", "cls"});
-        //2, 20, 3, 0.05, 0.01
-        //2, 50, 3, 0.05, 0.01
-        String fileNameTrainingClassification = "data.train.csv";
-        URL resourceTrainingClassification = classification.getClass().getResource(fileNameTrainingClassification);
-        classification.train(resourceTrainingClassification.getFile());
-        URL resourceTestClassification = classification.getClass().getResource("data.test.csv");
-        classification.test(resourceTestClassification.getFile());
+        String prePath = "data.circles";
+        String postPath = "10000.";
+        classificationProblem(prePath, postPath);
+    }
+
+    private static void classificationProblem(String prePath, String postPath) {
+        NeuralNetwork neuralNetwork = new NeuralNetwork(4000, new int[]{2, 10, 10, 3}, true, new ActivationTANH(),
+                0.004, 0.001, new String[]{"x", "y", "cls"});
+        count(prePath, postPath, neuralNetwork);
+    }
+
+    private static void regressionProblem(String prePath, String postPath) {
+        NeuralNetwork neuralNetwork = new NeuralNetwork(2000, new int[]{1, 10, 10, 1}, true, new ActivationTANH(),
+                0.01, 0.01, new String[]{"x", "y"});
+        count(prePath, postPath, neuralNetwork);
+    }
+
+    private static void count(String prePath, String postPath, NeuralNetwork neuralNetwork) {
+        String fileName = prePath + ".train." + postPath + "csv";
+        URL resourceTraining = neuralNetwork.getClass().getResource(fileName);
+        neuralNetwork.train(resourceTraining.getFile());
+        URL resourceTest = neuralNetwork.getClass().getResource(prePath + ".test." + postPath + "csv");
+        neuralNetwork.test(resourceTest.getFile());
     }
 }
