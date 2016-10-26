@@ -5,13 +5,13 @@ import java.net.URL;
 public class Program {
 
     public static void main(String[] args) {
-        String prePath = "data.circles";
+        String prePath = "data.multimodal";
         String postPath = "10000.";
-        classificationProblem(prePath, postPath);
+        regressionProblem(prePath, postPath);
     }
 
     private static void classificationProblem(String prePath, String postPath) {
-        NeuralNetwork neuralNetwork = new NeuralNetwork(4000, new int[]{2, 10, 10, 3}, true, new ActivationTANH(),
+        NeuralNetwork neuralNetwork = new NeuralNetwork(2000, new int[]{2, 10, 10, 2}, true, new ActivationTANH(),
                 0.004, 0.001, new String[]{"x", "y", "cls"});
         count(prePath, postPath, neuralNetwork);
     }
