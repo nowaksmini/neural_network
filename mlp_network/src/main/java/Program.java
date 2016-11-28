@@ -11,7 +11,7 @@ public class Program {
     }
 
     private static void classificationProblem(String prePath, String postPath) {
-        NeuralNetwork neuralNetwork = new NeuralNetwork(2000, new int[]{2, 10, 10, 2}, true, new ActivationTANH(),
+        NeuralNetwork neuralNetwork = new NeuralNetwork(1000, new int[]{2, 10, 10, 4}, false, new ActivationTANH(),
                 0.004, 0.001, new String[]{"x", "y", "cls"});
         count(prePath, postPath, neuralNetwork);
     }
