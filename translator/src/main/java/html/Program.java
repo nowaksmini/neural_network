@@ -6,7 +6,7 @@ import java.util.List;
 public class Program {
 
     public static void main(String[] args) throws IOException {
-        List<String> englishWords = FileUtils.readDataFromFile("normal-words.txt");
+        List<String> englishWords = FileUtils.readDataFromFile("simple-words.txt");
         for (String englishWord : englishWords) {
             HtmlUtils.readHtmlFromUri(englishWord);
         }
