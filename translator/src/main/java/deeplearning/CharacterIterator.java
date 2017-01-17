@@ -149,12 +149,6 @@ public class CharacterIterator implements DataSetIterator {
         if (exampleStartOffsets.size() == 0) throw new NoSuchElementException();
 
         int currMinibatchSize = Math.min(num, exampleStartOffsets.size());
-        //Allocate space:
-        //Note the order here:
-        // dimension 0 = number of examples in minibatch
-        // dimension 1 = size of each vector (i.e., number of characters)
-        // dimension 2 = length of each time series/example
-        //Why 'f' order here? See http://deeplearning4j.org/usingrnns.html#data section "Alternative: Implementing a custom DataSetIterator"
         INDArray input = Nd4j.create(new int[]{currMinibatchSize, validCharacters.length, exampleLength}, 'f');
         INDArray labels = Nd4j.create(new int[]{currMinibatchSize, validCharacters.length, exampleLength}, 'f');
 
@@ -197,7 +191,7 @@ public class CharacterIterator implements DataSetIterator {
         for (int i = 0; i < nMinibatchesPerEpoch; i++) {
             exampleStartOffsets.add(i * exampleLength);
         }
-        Collections.shuffle(exampleStartOffsets, rng);
+        Collections.shuffle(exampleStartOffsets, rng); // TODO POWINNO BYC TAK ZE pamietamz linijka po linijce
     }
 
     public boolean resetSupported() {

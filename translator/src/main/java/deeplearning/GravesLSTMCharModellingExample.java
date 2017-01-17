@@ -39,8 +39,8 @@ public class GravesLSTMCharModellingExample {
 
         //Get a DataSetIterator that handles vectorization of text into something we can use to train
         // our GravesLSTM network.
-        CharacterIterator iter = getShakespeareIterator(miniBatchSize, exampleLength);
-        int nOut = iter.totalOutcomes();
+        CharacterIterator shakespeareIterator = getShakespeareIterator(miniBatchSize, exampleLength);
+        int nOut = shakespeareIterator.totalOutcomes();
 
         //Set up network configuration:
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
@@ -53,7 +53,7 @@ public class GravesLSTMCharModellingExample {
                 .weightInit(WeightInit.XAVIER)
                 .updater(Updater.RMSPROP)
                 .list()
-                .layer(0, new GravesLSTM.Builder().nIn(iter.inputColumns()).nOut(lstmLayerSize)
+                .layer(0, new GravesLSTM.Builder().nIn(shakespeareIterator.inputColumns()).nOut(lstmLayerSize)
                         .activation("tanh").build())
                 .layer(1, new GravesLSTM.Builder().nIn(lstmLayerSize).nOut(lstmLayerSize)
                         .activation("tanh").build())
@@ -80,14 +80,14 @@ public class GravesLSTMCharModellingExample {
         //Do training, and then generate and print samples from network
         int miniBatchNumber = 0;
         for (int i = 0; i < numEpochs; i++) {
-            while (iter.hasNext()) {
-                DataSet ds = iter.next();
+            while (shakespeareIterator.hasNext()) {
+                DataSet ds = shakespeareIterator.next();
                 net.fit(ds);
                 if (++miniBatchNumber % generateSamplesEveryNMinibatches == 0) {
                     System.out.println("--------------------");
                     System.out.println("Completed " + miniBatchNumber + " minibatches of size " + miniBatchSize + "x" + exampleLength + " characters");
                     System.out.println("Sampling characters from network given initialization \"" + (generationInitialization == null ? "" : generationInitialization) + "\"");
-                    String[] samples = sampleCharactersFromNetwork(generationInitialization, net, iter, rng, nCharactersToSample, nSamplesToGenerate);
+                    String[] samples = sampleCharactersFromNetwork(generationInitialization, net, shakespeareIterator, rng, nCharactersToSample, nSamplesToGenerate);
                     for (int j = 0; j < samples.length; j++) {
                         System.out.println("----- Sample " + j + " -----");
                         System.out.println(samples[j]);
@@ -96,7 +96,7 @@ public class GravesLSTMCharModellingExample {
                 }
             }
 
-            iter.reset();    //Reset iterator for another epoch
+            shakespeareIterator.reset();    //Reset iterator for another epoch
         }
 
         System.out.println("\n\nExample complete");
