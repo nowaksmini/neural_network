@@ -18,7 +18,9 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class TranslatorRNN {
@@ -26,11 +28,12 @@ public class TranslatorRNN {
 
     public static void main(String[] args) throws Exception {
         trainNetwork();
-        // TODO fix test network
-//        List<String> englishTest = new LinkedList<>();
-//        englishTest.add("tea");
-//        englishTest.add("tea");
-//        testNetwork(englishTest);
+        // testNetwork("financial", "");
+        /*
+        SplitTestAndTrain testAndTrain = next.splitTestAndTrain(splitTrainNum, new Random(seed));
+    DataSet train = testAndTrain.getTrain();
+    DataSet test = testAndTrain.getTest();
+         */
     }
 
     private static void trainNetwork() {
@@ -61,7 +64,7 @@ public class TranslatorRNN {
         net.setListeners(new ScoreIterationListener(1));
         //Train model:
         int iEpoch = 0;
-        while (iEpoch < 2) {
+        while (iEpoch < 30000) {
             while (shakespeareIterator.hasNext()) {
                 DataSet ds = shakespeareIterator.next();
                 MultiDataSet multiDataSet = new MultiDataSet(ds.getFeatures(), ds.getLabels());
@@ -83,7 +86,7 @@ public class TranslatorRNN {
         System.out.println("\n\nNetwork saved");
     }
 
-    private static void testNetwork(List<String> englishInput) {
+    private static void testNetwork(String englishInput, String polishInput) {
         ComputationGraph net;
         try {
             FileInputStream file = new FileInputStream(NETWORK_PATH);
@@ -96,30 +99,17 @@ public class TranslatorRNN {
             return;
         }
         String[] validCharacters = getMinimalCharacterSet();
-        Map<String, Integer> charToIdxMap = new HashMap<>();
-        for (int i = 0; i < validCharacters.length; i++) {
-            charToIdxMap.put(validCharacters[i], i);
+        TranslatorIterator shakespeareIterator = new TranslatorIterator(123467, 1, 1, validCharacters,
+                Collections.singletonList(englishInput), Collections.singletonList(polishInput));
+        while (shakespeareIterator.hasNext()) {
+            DataSet ds = shakespeareIterator.next(1);
+            INDArray[] output = net.output(ds.getFeatures());
+            List<String> englishSelected = shakespeareIterator.getEnglishSelected();
+            List<String> polishSelected = shakespeareIterator.getPolishSelected();
+            INDArray predictions = output[0];
+            INDArray answers = Nd4j.argMax(predictions, 1);
+            checkAnswers(englishSelected, polishSelected, answers, shakespeareIterator.getValidCharacters());
         }
-        int wordsNumber = 1;
-        INDArray encoderSeq = Nd4j.zeros(wordsNumber, validCharacters.length * TranslatorIterator.MAX_LINE_LENGTH,
-                TranslatorIterator.MAX_LINE_LENGTH);
-
-        for (int i = 0; i < wordsNumber; i++) {
-            String englishWord = englishInput.get(0);
-            for (int j = englishWord.length(); j < TranslatorIterator.MAX_LINE_LENGTH; j++) {
-                englishWord += ' ';
-            }
-            String[] englishSplit = englishWord.split("");
-            for (int j = 0; j < englishSplit.length; j++) {
-                Integer integer = charToIdxMap.get(englishSplit[j]);
-                if (integer == null) {
-                    integer = charToIdxMap.get(" ");
-                }
-                encoderSeq.putScalar(new int[]{i, integer, j}, 1.0);
-            }
-        }
-        INDArray[] output = net.output(encoderSeq);
-        checkAnswers(englishInput, englishInput, output[0], validCharacters);
     }
 
     private static void saveNeuralNetwork(ComputationGraph computationGraph) {

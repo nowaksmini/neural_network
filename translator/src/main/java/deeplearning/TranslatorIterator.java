@@ -16,7 +16,6 @@ public class TranslatorIterator implements DataSetIterator {
 
     private Random randomG;
     private int currentBatch; //number of actual training
-    private final int seed;
     private final int batchSize;
     private final int totalBatches;
     private String[] validCharacters;
@@ -45,7 +44,6 @@ public class TranslatorIterator implements DataSetIterator {
      */
     public TranslatorIterator(int seed, int batchSize, int totalBatches, String[] validCharacters) {
 
-        this.seed = seed;
         this.randomG = new Random(seed);
 
         this.batchSize = batchSize;
@@ -74,6 +72,22 @@ public class TranslatorIterator implements DataSetIterator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        this.validCharacters = validCharacters;
+        charToIdxMap = new HashMap<>();
+        for (int i = 0; i < validCharacters.length; i++) {
+            charToIdxMap.put(validCharacters[i], i);
+        }
+    }
+
+    public TranslatorIterator(int seed, int batchSize, int totalBatches, String[] validCharacters,
+                              List<String> englishWords, List<String> polishWords) {
+
+        this.randomG = new Random(seed);
+        this.batchSize = batchSize;
+        this.totalBatches = totalBatches;
+        this.currentBatch = 0;
+        english = englishWords;
+        polish = polishWords;
         this.validCharacters = validCharacters;
         charToIdxMap = new HashMap<>();
         for (int i = 0; i < validCharacters.length; i++) {
