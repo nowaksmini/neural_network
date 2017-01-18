@@ -34,7 +34,7 @@ public class TranslatorIterator implements DataSetIterator {
     private List<String> englishSelected = new LinkedList<>();
     private List<String> polishSelected = new LinkedList<>();
 
-    public static final int MAX_LINE_LENGTH = 30;
+    public static final int MAX_LINE_LENGTH = 40;
 
     /**
      * creates TranslatorIterator
@@ -109,10 +109,18 @@ public class TranslatorIterator implements DataSetIterator {
             String[] polishSplit = polishWord.split("");
             String[] englishSplit = englishWord.split("");
             for (int j = 0; j < englishSplit.length; j++) {
-                encoderSeq.putScalar(new int[]{i, charToIdxMap.get(englishSplit[j]), j}, 1.0);
+                Integer integer = charToIdxMap.get(englishSplit[j]);
+                if (integer == null) {
+                    integer = charToIdxMap.get(" ");
+                }
+                encoderSeq.putScalar(new int[]{i, integer, j}, 1.0);
             }
             for (int j = 0; j < polishSplit.length; j++) {
-                outputSeq.putScalar(new int[]{i, charToIdxMap.get(polishSplit[j]), j}, 1.0);
+                Integer integer = charToIdxMap.get(polishSplit[j]);
+                if (integer == null) {
+                    integer = charToIdxMap.get(" ");
+                }
+                outputSeq.putScalar(new int[]{i, integer, j}, 1.0);
             }
         }
 
@@ -133,7 +141,7 @@ public class TranslatorIterator implements DataSetIterator {
     @Override
     public void reset() {
         currentBatch = 0;
-        randomG = new Random(seed);
+        //randomG = new Random(seed);
     }
 
     @Override

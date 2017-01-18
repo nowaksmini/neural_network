@@ -17,15 +17,24 @@ import org.nd4j.linalg.dataset.MultiDataSet;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 
 public class TranslatorRNN {
+    private static final String NETWORK_PATH = "network.txt";
 
     public static void main(String[] args) throws Exception {
+        trainNetwork();
+        // TODO fix test network
+//        List<String> englishTest = new LinkedList<>();
+//        englishTest.add("tea");
+//        englishTest.add("tea");
+//        testNetwork(englishTest);
+    }
 
-        int miniBatchSize = 2; // Number of file lines used when  training
+    private static void trainNetwork() {
+        int miniBatchSize = 4; // Number of file lines used when training
         int numHiddenNodes = 128;
         String[] validCharacters = getMinimalCharacterSet();
         int FEATURE_VEC_SIZE = validCharacters.length * TranslatorIterator.MAX_LINE_LENGTH;
@@ -52,12 +61,12 @@ public class TranslatorRNN {
         net.setListeners(new ScoreIterationListener(1));
         //Train model:
         int iEpoch = 0;
-        while (iEpoch < 20) {
+        while (iEpoch < 2) {
             while (shakespeareIterator.hasNext()) {
                 DataSet ds = shakespeareIterator.next();
                 MultiDataSet multiDataSet = new MultiDataSet(ds.getFeatures(), ds.getLabels());
                 net.fit(multiDataSet);
-                org.nd4j.linalg.api.ndarray.INDArray[] output = net.output(ds.getFeatures());
+                INDArray[] output = net.output(ds.getFeatures());
                 List<String> englishSelected = shakespeareIterator.getEnglishSelected();
                 List<String> polishSelected = shakespeareIterator.getPolishSelected();
                 INDArray predictions = output[0];
@@ -66,10 +75,63 @@ public class TranslatorRNN {
             }
             iEpoch++;
             shakespeareIterator.reset();
+            System.out.println("\n* = * = * = * = * = * = * = * = * = ** EPOCH " + iEpoch + " COMPLETE ** = * = * = * = * = * = * = * = * = * = * = * = * = * =\n");
         }
-        System.out.println("\n* = * = * = * = * = * = * = * = * = ** EPOCH " + iEpoch + " COMPLETE ** = * = * = * = * = * = * = * = * = * = * = * = * = * =");
 
-        System.out.println("\n\nExample complete");
+        saveNeuralNetwork(net);
+
+        System.out.println("\n\nNetwork saved");
+    }
+
+    private static void testNetwork(List<String> englishInput) {
+        ComputationGraph net;
+        try {
+            FileInputStream file = new FileInputStream(NETWORK_PATH);
+            ObjectInputStream objectOutputStream = new ObjectInputStream(file);
+            net = (ComputationGraph) objectOutputStream.readObject();
+            objectOutputStream.close();
+            file.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        String[] validCharacters = getMinimalCharacterSet();
+        Map<String, Integer> charToIdxMap = new HashMap<>();
+        for (int i = 0; i < validCharacters.length; i++) {
+            charToIdxMap.put(validCharacters[i], i);
+        }
+        int wordsNumber = 1;
+        INDArray encoderSeq = Nd4j.zeros(wordsNumber, validCharacters.length * TranslatorIterator.MAX_LINE_LENGTH,
+                TranslatorIterator.MAX_LINE_LENGTH);
+
+        for (int i = 0; i < wordsNumber; i++) {
+            String englishWord = englishInput.get(0);
+            for (int j = englishWord.length(); j < TranslatorIterator.MAX_LINE_LENGTH; j++) {
+                englishWord += ' ';
+            }
+            String[] englishSplit = englishWord.split("");
+            for (int j = 0; j < englishSplit.length; j++) {
+                Integer integer = charToIdxMap.get(englishSplit[j]);
+                if (integer == null) {
+                    integer = charToIdxMap.get(" ");
+                }
+                encoderSeq.putScalar(new int[]{i, integer, j}, 1.0);
+            }
+        }
+        INDArray[] output = net.output(encoderSeq);
+        checkAnswers(englishInput, englishInput, output[0], validCharacters);
+    }
+
+    private static void saveNeuralNetwork(ComputationGraph computationGraph) {
+        try {
+            FileOutputStream file = new FileOutputStream(NETWORK_PATH);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(file);
+            objectOutputStream.writeObject(computationGraph);
+            objectOutputStream.close();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void checkAnswers(List<String> english, List<String> polish, INDArray answers,
@@ -92,7 +154,7 @@ public class TranslatorRNN {
             System.out.println("TRANSLATED--->" + strAnswerR);
             System.out.println();
         }
-        System.out.println("*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*==*=*=*=*=*");
+        System.out.println("* = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * = * =\n");
     }
 
     /**
