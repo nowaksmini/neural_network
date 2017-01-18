@@ -11,6 +11,7 @@ import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.MultiDataSet;
@@ -28,7 +29,8 @@ public class TranslatorRNN {
 
     public static void main(String[] args) throws Exception {
         trainNetwork();
-        // testNetwork("financial", "");
+        //testNetwork("to cast", "");
+
         /*
         SplitTestAndTrain testAndTrain = next.splitTestAndTrain(splitTrainNum, new Random(seed));
     DataSet train = testAndTrain.getTrain();
@@ -91,10 +93,10 @@ public class TranslatorRNN {
         try {
             FileInputStream file = new FileInputStream(NETWORK_PATH);
             ObjectInputStream objectOutputStream = new ObjectInputStream(file);
-            net = (ComputationGraph) objectOutputStream.readObject();
+            net = ModelSerializer.restoreComputationGraph(objectOutputStream);
             objectOutputStream.close();
             file.close();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return;
         }
@@ -116,7 +118,7 @@ public class TranslatorRNN {
         try {
             FileOutputStream file = new FileOutputStream(NETWORK_PATH);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(file);
-            objectOutputStream.writeObject(computationGraph);
+            ModelSerializer.writeModel(computationGraph, objectOutputStream, true);
             objectOutputStream.close();
             file.close();
         } catch (IOException e) {
