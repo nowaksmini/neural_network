@@ -3,8 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="0a34618e-893c-4a2c-a3c9-9d3258f8a364" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/deeplearning/TranslatorIterator.java" afterPath="$PROJECT_DIR$/src/main/java/deeplearning/TranslatorIterator.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/deeplearning/TranslatorRNN.java" afterPath="$PROJECT_DIR$/src/main/java/deeplearning/TranslatorRNN.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/translate.txt" afterPath="$PROJECT_DIR$/target/classes/translate.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/translate.txt" afterPath="$PROJECT_DIR$/src/main/resources/translate.txt" />
     </list>
     <ignored path="translator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,17 +35,38 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="TranslatorRNN.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TranslatorRNN.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/deeplearning/TranslatorRNN.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="40" column="39" lean-forward="false" selection-start-line="40" selection-start-column="39" selection-end-line="40" selection-end-column="39" />
+            <state relative-caret-position="30">
+              <caret line="61" column="0" lean-forward="true" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#trainNetwork#0;class#TranslatorRNN#0" expanded="false" />
                 <element signature="method#testNetwork#0;class#TranslatorRNN#0" expanded="false" />
                 <element signature="method#saveNeuralNetwork#0;class#TranslatorRNN#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TranslatorIterator.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/deeplearning/TranslatorIterator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="35" column="49" lean-forward="false" selection-start-line="35" selection-start-column="49" selection-end-line="35" selection-end-column="49" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="translate.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/translate.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="427">
+              <caret line="46282" column="32" lean-forward="false" selection-start-line="46282" selection-start-column="32" selection-end-line="46282" selection-end-column="32" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -125,9 +147,9 @@
         <option value="$PROJECT_DIR$/src/main/java/deeplearning/CharacterIterator.java" />
         <option value="$PROJECT_DIR$/src/main/java/final_working/TranslatorIterator.java" />
         <option value="$PROJECT_DIR$/src/main/java/final_working/TranslatorRNN.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/translate.txt" />
         <option value="$PROJECT_DIR$/src/main/java/deeplearning/TranslatorIterator.java" />
         <option value="$PROJECT_DIR$/src/main/java/deeplearning/TranslatorRNN.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/translate.txt" />
       </list>
     </option>
   </component>
@@ -919,12 +941,12 @@
       <workItem from="1481031821504" duration="1335000" />
       <workItem from="1484152265292" duration="12595000" />
       <workItem from="1484603421856" duration="132000" />
-      <workItem from="1484674759654" duration="26686000" />
+      <workItem from="1484674759654" duration="26926000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55089000" />
+    <option name="totallyTimeSpent" value="55329000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-80" width="1616" height="876" extended-state="6" />
@@ -1165,7 +1187,6 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="method#trainNetwork#0;class#TranslatorRNN#0" expanded="false" />
             <element signature="method#testNetwork#0;class#TranslatorRNN#0" expanded="false" />
             <element signature="method#saveNeuralNetwork#0;class#TranslatorRNN#0" expanded="false" />
           </folding>
@@ -1178,7 +1199,6 @@
           <caret line="83" column="5" lean-forward="false" selection-start-line="83" selection-start-column="5" selection-end-line="83" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="method#next#0;class#TranslatorIterator#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1275,20 +1295,6 @@
     <entry file="file://D:/Pobrane/CharacterIterator.java" />
     <entry file="file://D:/Pobrane/GravesLSTMCharModellingExample.java" />
     <entry file="file://D:/Pobrane/pom.xml" />
-    <entry file="file://$PROJECT_DIR$/src/main/resources/dataset/phrases.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="11957" column="40" lean-forward="false" selection-start-line="11957" selection-start-column="40" selection-end-line="11957" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/dataset/sentences.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/html/Program.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -1539,17 +1545,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/deeplearning/TranslatorIterator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1020">
-          <caret line="18" column="4" lean-forward="false" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="4" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#next#0;class#TranslatorIterator#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/network.txt">
       <provider editor-type-id="LargeFileEditor">
         <state />
@@ -1561,23 +1556,48 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/translate.txt">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/dataset/phrases.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328042">
+          <caret line="19786" column="0" lean-forward="false" selection-start-line="19786" selection-start-column="0" selection-end-line="19786" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/dataset/sentences.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="3" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/deeplearning/TranslatorRNN.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="40" column="39" lean-forward="false" selection-start-line="40" selection-start-column="39" selection-end-line="40" selection-end-column="39" />
+        <state relative-caret-position="30">
+          <caret line="61" column="0" lean-forward="true" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="method#trainNetwork#0;class#TranslatorRNN#0" expanded="false" />
             <element signature="method#testNetwork#0;class#TranslatorRNN#0" expanded="false" />
             <element signature="method#saveNeuralNetwork#0;class#TranslatorRNN#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/translate.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="427">
+          <caret line="46282" column="32" lean-forward="false" selection-start-line="46282" selection-start-column="32" selection-end-line="46282" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/deeplearning/TranslatorIterator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="35" column="49" lean-forward="false" selection-start-line="35" selection-start-column="49" selection-end-line="35" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

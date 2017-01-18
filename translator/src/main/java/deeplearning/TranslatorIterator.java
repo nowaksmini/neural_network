@@ -33,7 +33,7 @@ public class TranslatorIterator implements DataSetIterator {
     private List<String> englishSelected = new LinkedList<>();
     private List<String> polishSelected = new LinkedList<>();
 
-    public static final int MAX_LINE_LENGTH = 40;
+    public static final int MAX_LINE_LENGTH = 300;
 
     /**
      * creates TranslatorIterator

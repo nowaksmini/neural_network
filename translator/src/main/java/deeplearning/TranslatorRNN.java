@@ -30,8 +30,7 @@ public class TranslatorRNN {
     public static void main(String[] args) throws Exception {
         trainNetwork();
         //testNetwork("to cast", "");
-
-        /*
+        /* // TODO for report
         SplitTestAndTrain testAndTrain = next.splitTestAndTrain(splitTrainNum, new Random(seed));
     DataSet train = testAndTrain.getTrain();
     DataSet test = testAndTrain.getTest();
@@ -66,7 +65,7 @@ public class TranslatorRNN {
         net.setListeners(new ScoreIterationListener(1));
         //Train model:
         int iEpoch = 0;
-        while (iEpoch < 30000) {
+        while (iEpoch < 40000) {
             while (shakespeareIterator.hasNext()) {
                 DataSet ds = shakespeareIterator.next();
                 MultiDataSet multiDataSet = new MultiDataSet(ds.getFeatures(), ds.getLabels());
