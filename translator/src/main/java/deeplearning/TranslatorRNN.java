@@ -25,17 +25,18 @@ public class TranslatorRNN {
 
     public static void main(String[] args) throws Exception {
 
-        int miniBatchSize = 3; // Number of file lines used when  training
+        int miniBatchSize = 2; // Number of file lines used when  training
         int numHiddenNodes = 128;
-        char[] validCharacters = getMinimalCharacterSet();
-        int FEATURE_VEC_SIZE = validCharacters.length * TranslatorIterator.MAX_LINE_LENGTH; // 30 * 77
-        TranslatorIterator shakespeareIterator = new TranslatorIterator(12345, miniBatchSize, 3, validCharacters);
+        String[] validCharacters = getMinimalCharacterSet();
+        int FEATURE_VEC_SIZE = validCharacters.length * TranslatorIterator.MAX_LINE_LENGTH;
+        int seed = 123467;
+        TranslatorIterator shakespeareIterator = new TranslatorIterator(seed, miniBatchSize, 3, validCharacters);
 
         ComputationGraphConfiguration conf = new NeuralNetConfiguration.Builder().weightInit(WeightInit.XAVIER)
                 .learningRate(0.5)
                 .updater(Updater.RMSPROP)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(1)
-                .seed(12345)
+                .seed(seed)
                 .graphBuilder()
                 .addInputs("additionIn")
                 .setInputTypes(InputType.recurrent(FEATURE_VEC_SIZE))
@@ -51,7 +52,7 @@ public class TranslatorRNN {
         net.setListeners(new ScoreIterationListener(1));
         //Train model:
         int iEpoch = 0;
-        while (iEpoch < 5) {
+        while (iEpoch < 20) {
             while (shakespeareIterator.hasNext()) {
                 DataSet ds = shakespeareIterator.next();
                 MultiDataSet multiDataSet = new MultiDataSet(ds.getFeatures(), ds.getLabels());
@@ -72,13 +73,16 @@ public class TranslatorRNN {
     }
 
     private static void checkAnswers(List<String> english, List<String> polish, INDArray answers,
-                                     char[] validCharacters) {
+                                     String[] validCharacters) {
         int nTests = answers.size(0);
         for (int iTest = 0; iTest < nTests; iTest++) {
             int aDigit = 0;
             String strAnswer = "";
             while (aDigit < TranslatorIterator.MAX_LINE_LENGTH) {
                 int thisDigit = answers.getInt(iTest, aDigit);
+                if (thisDigit > validCharacters.length) {
+                    thisDigit = 0; // SPACE
+                }
                 strAnswer = strAnswer + validCharacters[thisDigit];
                 aDigit++;
             }
@@ -94,16 +98,22 @@ public class TranslatorRNN {
     /**
      * A minimal character set, with a-z, A-Z, 0-9 and common punctuation etc
      */
-    private static char[] getMinimalCharacterSet() {
-        List<Character> validChars = new LinkedList<>();
-        for (char c = 'a'; c <= 'z'; c++) validChars.add(c);
-        for (char c = 'A'; c <= 'Z'; c++) validChars.add(c);
-        for (char c = '0'; c <= '9'; c++) validChars.add(c);
-        char[] temp = {'!', '&', '(', ')', '?', '-', '\'', '"', ',', '.', ':', ';', ' ', '\n', '\t'};
-        for (char c : temp) validChars.add(c);
-        char[] out = new char[validChars.size()];
+    private static String[] getMinimalCharacterSet() {
+        List<String> validChars = new LinkedList<>();
+        char[] temp = {' ', '!', '&', '(', ')', '?', '-', '\'', '"', ',', '.', ':', ';', '\n', '\t'};
+        for (char c : temp) validChars.add(String.valueOf(c));
+        for (char c = 'a'; c <= 'z'; c++) validChars.add(String.valueOf(c));
+        for (char c = 'A'; c <= 'Z'; c++) validChars.add(String.valueOf(c));
+        for (char c = '0'; c <= '9'; c++) validChars.add(String.valueOf(c));
+        //polish = {"¹", "æ", "ê", "³", "ñ", "ó", "œ", "Ÿ", "¿"};
+        char[] polish = {'\u0105', '\u0107', '\u0119', '\u0142', '\u0144', '\u00F3', '\u015B', '\u017A', '\u017C',
+                '\u0104', '\u0106', '\u0118', '\u0141', '\u0143', '\u00D3', '\u015A', '\u0179', '\u017B'};
+        for (char s : polish) {
+            validChars.add(String.valueOf(s));
+        }
+        String[] out = new String[validChars.size()];
         int i = 0;
-        for (Character c : validChars) out[i++] = c;
+        for (String c : validChars) out[i++] = c;
         return out;
     }
 

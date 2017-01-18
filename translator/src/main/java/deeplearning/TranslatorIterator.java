@@ -19,8 +19,8 @@ public class TranslatorIterator implements DataSetIterator {
     private final int seed;
     private final int batchSize;
     private final int totalBatches;
-    private char[] validCharacters;
-    private Map<Character, Integer> charToIdxMap;
+    private String[] validCharacters;
+    private Map<String, Integer> charToIdxMap;
 
     /**
      * List of english sequences to translate
@@ -43,7 +43,7 @@ public class TranslatorIterator implements DataSetIterator {
      * @param batchSize    number of words in one learning test
      * @param totalBatches number of all tests e.g dictionary has 200 words, batchSize=10, totalBatches=20
      */
-    public TranslatorIterator(int seed, int batchSize, int totalBatches, char[] validCharacters) {
+    public TranslatorIterator(int seed, int batchSize, int totalBatches, String[] validCharacters) {
 
         this.seed = seed;
         this.randomG = new Random(seed);
@@ -87,7 +87,7 @@ public class TranslatorIterator implements DataSetIterator {
         englishSelected = new LinkedList<>();
 
         for (int i = 0; i < wordsNumber; i++) {
-            int index = randomG.nextInt(wordsNumber);
+            int index = randomG.nextInt(english.size());
             String englishWord = english.get(index);
             String polishWord = polish.get(index);
             englishSelected.add(englishWord);
@@ -98,26 +98,21 @@ public class TranslatorIterator implements DataSetIterator {
         INDArray outputSeq = Nd4j.zeros(wordsNumber, validCharacters.length * MAX_LINE_LENGTH, MAX_LINE_LENGTH);
 
         for (int i = 0; i < wordsNumber; i++) {
-            char[] englishWord = new char[MAX_LINE_LENGTH];
-            char[] polishWord = new char[MAX_LINE_LENGTH];
-            for (int j = 0; j < englishWord.length; j++) {
-                englishWord[j] = ' ';
-                polishWord[j] = ' ';
+            String englishWord = englishSelected.get(i);
+            String polishWord = polishSelected.get(i);
+            for (int j = englishWord.length(); j < MAX_LINE_LENGTH; j++) {
+                englishWord += ' ';
             }
-            char[] englishChars = englishSelected.get(i).toCharArray();
-            for (int j = 0; j < englishChars.length; j++) {
-                englishWord[j] = englishChars[j];
+            for (int j = polishWord.length(); j < MAX_LINE_LENGTH; j++) {
+                polishWord += ' ';
             }
-            char[] polishChars = polishSelected.get(i).toCharArray();
-            for (int j = 0; j < polishChars.length; j++) {
-                polishWord[j] = polishChars[j];
+            String[] polishSplit = polishWord.split("");
+            String[] englishSplit = englishWord.split("");
+            for (int j = 0; j < englishSplit.length; j++) {
+                encoderSeq.putScalar(new int[]{i, charToIdxMap.get(englishSplit[j]), j}, 1.0);
             }
-
-            for (int j = 0; j < englishWord.length; j++) {
-                encoderSeq.putScalar(new int[]{i, charToIdxMap.get(englishWord[j]), j}, 1.0);
-            }
-            for (int j = 0; j < polishWord.length; j++) {
-                outputSeq.putScalar(new int[]{i, charToIdxMap.get(polishWord[j]), j}, 1.0);
+            for (int j = 0; j < polishSplit.length; j++) {
+                outputSeq.putScalar(new int[]{i, charToIdxMap.get(polishSplit[j]), j}, 1.0);
             }
         }
 
@@ -213,11 +208,11 @@ public class TranslatorIterator implements DataSetIterator {
     }
 
 
-    public char[] getValidCharacters() {
+    public String[] getValidCharacters() {
         return validCharacters;
     }
 
-    public Map<Character, Integer> getCharToIdxMap() {
+    public Map<String, Integer> getCharToIdxMap() {
         return charToIdxMap;
     }
 }
