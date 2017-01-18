@@ -1,4 +1,4 @@
-package final_working;
+package deeplearning;
 
 import html.Program;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -43,7 +43,7 @@ public class TranslatorIterator implements DataSetIterator {
      * @param batchSize    number of words in one learning test
      * @param totalBatches number of all tests e.g dictionary has 200 words, batchSize=10, totalBatches=20
      */
-    public TranslatorIterator(int seed, int batchSize, int totalBatches) {
+    public TranslatorIterator(int seed, int batchSize, int totalBatches, char[] validCharacters) {
 
         this.seed = seed;
         this.randomG = new Random(seed);
@@ -74,35 +74,11 @@ public class TranslatorIterator implements DataSetIterator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        validCharacters = getMinimalCharacterSet();
+        this.validCharacters = validCharacters;
         charToIdxMap = new HashMap<>();
         for (int i = 0; i < validCharacters.length; i++) {
             charToIdxMap.put(validCharacters[i], i);
         }
-    }
-
-    public char convertIndexToCharacter(int idx) {
-        return validCharacters[idx];
-    }
-
-    public int convertCharacterToIndex(char c) {
-        return charToIdxMap.get(c);
-    }
-
-    /**
-     * A minimal character set, with a-z, A-Z, 0-9 and common punctuation etc
-     */
-    public static char[] getMinimalCharacterSet() {
-        List<Character> validChars = new LinkedList<>();
-        for (char c = 'a'; c <= 'z'; c++) validChars.add(c);
-        for (char c = 'A'; c <= 'Z'; c++) validChars.add(c);
-        for (char c = '0'; c <= '9'; c++) validChars.add(c);
-        char[] temp = {'!', '&', '(', ')', '?', '-', '\'', '"', ',', '.', ':', ';', ' ', '\n', '\t'};
-        for (char c : temp) validChars.add(c);
-        char[] out = new char[validChars.size()];
-        int i = 0;
-        for (Character c : validChars) out[i++] = c;
-        return out;
     }
 
     @Override
@@ -110,14 +86,10 @@ public class TranslatorIterator implements DataSetIterator {
         polishSelected = new LinkedList<>();
         englishSelected = new LinkedList<>();
 
-        int polishWordsLength = 0;
-        int englishWordsLength = 0;
         for (int i = 0; i < wordsNumber; i++) {
             int index = randomG.nextInt(wordsNumber);
             String englishWord = english.get(index);
-            englishWordsLength += englishWord.length();
             String polishWord = polish.get(index);
-            polishWordsLength += polishWord.length();
             englishSelected.add(englishWord);
             polishSelected.add(polishWord);
         }
@@ -149,8 +121,6 @@ public class TranslatorIterator implements DataSetIterator {
             }
         }
 
-        //Predict "."
-        /* ========================================================================== */
         currentBatch++;
         return new DataSet(encoderSeq, outputSeq);
     }
@@ -241,6 +211,7 @@ public class TranslatorIterator implements DataSetIterator {
     public List<String> getPolishSelected() {
         return polishSelected;
     }
+
 
     public char[] getValidCharacters() {
         return validCharacters;
