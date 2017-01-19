@@ -1,4 +1,12 @@
-to cast ---> ciskać
-tea ---> herbatka
-xyz ---> standardowe coś
-love ---> miłość
+I ---> ja
+I am ---> jestem
+'m ---> jestem
+'s ---> jest
+he ---> on
+she ---> ona
+she's ---> ona jest
+is ---> jest
+he is ---> on jest
+cool ---> ekstra
+super ---> super
+she is cool ---> ona jest ekstra
