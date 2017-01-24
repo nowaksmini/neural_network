@@ -55,7 +55,7 @@ public class TranslatorIterator implements DataSetIterator {
         english = new ArrayList<>();
         polish = new ArrayList<>();
         try {
-            FileReader file = new FileReader(classLoader.getResource("translate.txt").getFile());
+            FileReader file = new FileReader(classLoader.getResource(TranslatorProgram.TRAINING_SET_PATH).getFile());
 
             BufferedReader bw = new BufferedReader(file);
             String line;

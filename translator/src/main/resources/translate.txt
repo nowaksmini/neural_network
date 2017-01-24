@@ -1,12 +1,13 @@
-I ---> ja
-I am ---> jestem
-'m ---> jestem
-'s ---> jest
+i ---> ja
+i am ---> jestem
+i'm ---> jestem
 he ---> on
 she ---> ona
+it ---> to
 she's ---> ona jest
 is ---> jest
 he is ---> on jest
-cool ---> ekstra
+cool ---> mega
 super ---> super
-she is cool ---> ona jest ekstra
+she is cool ---> ona jest mega
+it's super ---> to jest super

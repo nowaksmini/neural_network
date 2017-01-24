@@ -1,5 +1,6 @@
 package deeplearning;
 
+import html.Program;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.BackpropType;
 import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
@@ -26,40 +27,64 @@ import java.util.Scanner;
 
 
 public class TranslatorProgram {
-    private static final String NETWORK_PATH = "network.txt";
+    private static final String NETWORK_PATH = "network_many_10000_12_1hidden.txt";
+    public static final String TRAINING_SET_PATH = "translate.txt";
+    private static final String TEST_SET_PATH = "test.txt";
 
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Select mode:");
         System.out.println("1 Train neural network");
-        System.out.println("2 Test existing neural network");
+        System.out.println("2 Test existing neural network with own words");
+        System.out.println("3 Test existing neural network with prepared test data");
         System.out.println("Your choice: ");
         int mode = scanner.nextInt();
         if (mode == 1) {
             System.out.println();
             System.out.println("Started training neural network");
             trainNetwork();
-        } else {
+        } else if (mode == 2) {
             System.out.println();
             System.out.print("Enter numbers of tests: ");
             int tests = scanner.nextInt();
-            ComputationGraph net;
-            try {
-                FileInputStream file = new FileInputStream(NETWORK_PATH);
-                ObjectInputStream objectOutputStream = new ObjectInputStream(file);
-                net = ModelSerializer.restoreComputationGraph(objectOutputStream);
-                objectOutputStream.close();
-                file.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
+            ComputationGraph net = readTrainedNeuralNetwork();
             for (int i = 0; i < tests; i++) {
                 System.out.print("Enter text in english to translate (max " + TranslatorIterator.MAX_LINE_LENGTH + ") signs: ");
                 scanner.nextLine();
                 String englishWord = scanner.nextLine();
                 testNetwork(net, englishWord, "?");
             }
+        } else {
+            ComputationGraph net = readTrainedNeuralNetwork();
+            try {
+                ClassLoader classLoader = Program.class.getClassLoader();
+                FileReader file = new FileReader(classLoader.getResource(TEST_SET_PATH).getFile());
+
+                BufferedReader bw = new BufferedReader(file);
+                String line;
+                while ((line = bw.readLine()) != null) {
+                    testNetwork(net, line, "?");
+                }
+                bw.close();
+                file.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static ComputationGraph readTrainedNeuralNetwork() {
+        ComputationGraph net;
+        try {
+            FileInputStream file = new FileInputStream(NETWORK_PATH);
+            ObjectInputStream objectOutputStream = new ObjectInputStream(file);
+            net = ModelSerializer.restoreComputationGraph(objectOutputStream);
+            objectOutputStream.close();
+            file.close();
+            return net;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -70,10 +95,10 @@ public class TranslatorProgram {
         String[] validCharacters = getMinimalCharacterSet();
         int FEATURE_VEC_SIZE = validCharacters.length * TranslatorIterator.MAX_LINE_LENGTH;
         int seed = 123467;
-        TranslatorIterator translatorIterator = new TranslatorIterator(seed, miniBatchSize, 4, validCharacters);
+        TranslatorIterator translatorIterator = new TranslatorIterator(seed, miniBatchSize, 10, validCharacters);
 
         ComputationGraphConfiguration conf = new NeuralNetConfiguration.Builder()
-                .learningRate(0.1)
+                .learningRate(0.01)
                 .rmsDecay(0.95)
                 .regularization(true)
                 .l2(0.001) // regularization coefficient Use with .regularization(true)
@@ -91,7 +116,7 @@ public class TranslatorProgram {
                                 .activation("tanh")
                                 .build(),
                         "translateInput")
-                .addLayer("hiddenLayer",
+                .addLayer("hiddenLayer1",
                         new GravesLSTM.Builder()
                                 .nIn(numHiddenNodes)
                                 .nOut(numHiddenNodes)
@@ -105,7 +130,7 @@ public class TranslatorProgram {
                                 .activation("softmax")
                                 .lossFunction(LossFunctions.LossFunction.MCXENT)
                                 .build(),
-                        "hiddenLayer")
+                        "hiddenLayer1")
                 .setOutputs("outputLayer")
                 .backpropType(BackpropType.TruncatedBPTT)
                 .tBPTTForwardLength(tbpttLength)
@@ -125,7 +150,7 @@ public class TranslatorProgram {
         net.setListeners(new ScoreIterationListener(1));
         //Train model:
         int iEpoch = 0;
-        while (iEpoch < 1000) {
+        while (iEpoch < 2000) {
             while (translatorIterator.hasNext()) {
                 DataSet ds = translatorIterator.next();
                 MultiDataSet multiDataSet = new MultiDataSet(ds.getFeatures(), ds.getLabels());
@@ -202,17 +227,9 @@ public class TranslatorProgram {
      */
     private static String[] getMinimalCharacterSet() {
         List<String> validChars = new LinkedList<>();
-        char[] temp = {' ', '!', '&', '(', ')', '?', '-', '\'', '"', ',', '.', ':', ';', '\n', '\t'};
+        char[] temp = {' ', '\''};
         for (char c : temp) validChars.add(String.valueOf(c));
         for (char c = 'a'; c <= 'z'; c++) validChars.add(String.valueOf(c));
-        for (char c = 'A'; c <= 'Z'; c++) validChars.add(String.valueOf(c));
-        for (char c = '0'; c <= '9'; c++) validChars.add(String.valueOf(c));
-        //polish = {"¹", "æ", "ê", "³", "ñ", "ó", "œ", "Ÿ", "¿"};
-        char[] polish = {'\u0105', '\u0107', '\u0119', '\u0142', '\u0144', '\u00F3', '\u015B', '\u017A', '\u017C',
-                '\u0104', '\u0106', '\u0118', '\u0141', '\u0143', '\u00D3', '\u015A', '\u0179', '\u017B'};
-        for (char s : polish) {
-            validChars.add(String.valueOf(s));
-        }
         String[] out = new String[validChars.size()];
         int i = 0;
         for (String c : validChars) out[i++] = c;
